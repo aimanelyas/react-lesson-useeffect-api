@@ -1,0 +1,1 @@
+Some notes on how to use useEffect and how to interact with API
