@@ -1,6 +1,15 @@
 import './App.css';
 import Axios from "axios";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext } from 'react';
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import { Home} from "./pages/Home";
+import { Developers} from "./pages/Developers";
+import { Funny} from "./pages/Funny";
+import { Family} from "./pages/Family";
+import { Navbar } from './Navbar';
+import { Profile } from './pages/Profile';
+
+export const AppContext = createContext();
 
 // // Example 1
 // function App() {
@@ -64,6 +73,7 @@ import { useState, useEffect } from 'react';
 function App() {
 
   const [excuse, setExcuse] = useState("");
+  const [username, setUsername] = useState("Aiman Elyas");
   
   const fetchData = (category) => {
     Axios.get(`https://excuser-three.vercel.app/v1/excuse/${category}/`).then((res) => {
@@ -73,12 +83,19 @@ function App() {
   
     return (
       <div className="App">
-        <h1> Generate An Excuse</h1>
-        <button onClick={() => fetchData("family")}> Family</button>
-        <button onClick={() => fetchData("funny")}> Funny</button>
-        <button onClick={() => fetchData("developers")}> Developers</button>
-
-        <h2> {excuse}</h2>
+        <AppContext.Provider value={{ username, setUsername, fetchData, excuse}}>
+          <Router>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/family" element={<Family category={"family"}/>} />
+              <Route path="/funny" element={<Funny category={"funny"}/>} />
+              <Route path="/developers" element={<Developers category={"developers"}/>} />
+              <Route path="*" element={<h1> Page Not Found</h1>} />
+            </Routes>
+          </Router>
+        </AppContext.Provider>
       </div>
     );
   }
